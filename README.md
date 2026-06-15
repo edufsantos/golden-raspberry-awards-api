@@ -1,98 +1,204 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Golden Raspberry Awards API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API em NestJS para análise de produtores com maior e menor intervalo entre vitórias na categoria **Pior Filme**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🚀 Tecnologias utilizadas
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/en)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![TypeORM](https://img.shields.io/badge/TypeORM-FE0902?logo=typeorm&logoColor=white)](https://typeorm.io/)
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
+[![better-sqlite3](https://img.shields.io/badge/better--sqlite3-0B7285?logo=sqlite&logoColor=white)](https://github.com/WiseLibs/better-sqlite3)
+[![Winston](https://img.shields.io/badge/Winston-231F20?logo=github&logoColor=white)](https://github.com/winstonjs/winston)
+[![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white)](https://jestjs.io/)
+[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white)](https://eslint.org/)
+[![Prettier](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=1A2B34)](https://prettier.io/)
 
-## Project setup
+---
 
-```bash
-$ yarn install
-```
+## 📦 Pré-requisitos
 
-## Compile and run the project
+- Node.js **20+**
+- npm **10+**
 
-```bash
-# development
-$ yarn run start
+> Observação: o projeto usa banco em memória (`better-sqlite3`), sem necessidade de instalar SGBD local.
 
-# watch mode
-$ yarn run start:dev
+---
 
-# production mode
-$ yarn run start:prod
-```
+## ▶️ Manual de inicialização da API (passo a passo)
 
-## Run tests
+### 1) Clonar e acessar o projeto
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+git clone https://github.com/edufsantos/golden-raspberry-awards-api
+cd api
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 2) Instalar dependências
 
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+npm install
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 3) Configurar variáveis de ambiente
 
-## Resources
+Este projeto valida ambiente no bootstrap. Garanta as variáveis abaixo:
 
-Check out a few resources that may come in handy when working with NestJS:
+| Variável    | Exemplo                        | Obrigatória | Descrição                    |
+| ----------- | ------------------------------ | ----------- | ---------------------------- |
+| `NODE_ENV`  | `development`                  | Sim         | Ambiente de execução         |
+| `PORT`      | `3000`                         | Sim         | Porta da API                 |
+| `LOG_LEVEL` | `log,warn,error,debug,verbose` | Sim         | Níveis habilitados no logger |
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Exemplo (macOS/Linux):
 
-## Support
+```bash
+export NODE_ENV=development
+export PORT=3000
+export LOG_LEVEL=log,warn,error,debug,verbose
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 4) Rodar em modo desenvolvimento
 
-## Stay in touch
+```bash
+npm run start:dev
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+API disponível em:
 
-## License
+```text
+http://localhost:3000
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### 5) Endpoints para validar rápido
+
+- `GET /` → retorna `Hello World!`
+- `GET /producers/awards-interval` → retorna intervalos mínimo e máximo de vitórias por produtor
+
+### 6) Rodar testes
+
+```bash
+# unitários
+npm run test
+
+# e2e
+npm run test:e2e
+
+# cobertura
+npm run test:cov
+```
+
+### 7) Build e produção
+
+```bash
+npm run build
+npm run start:prod
+```
+
+---
+
+## 🌐 CORS
+
+O CORS está restrito para:
+
+```text
+http://localhost:5173
+```
+
+Isso permite integração local com frontend (ex.: Vite) nesta origem.
+
+---
+
+## 🧠 Regra de negócio principal
+
+O endpoint `GET /producers/awards-interval`:
+
+1. Busca filmes vencedores.
+2. Agrupa anos de vitória por produtor.
+3. Calcula intervalos entre vitórias consecutivas.
+4. Retorna os produtores com menor (`min`) e maior (`max`) intervalo.
+
+Formato de resposta:
+
+```json
+{
+  "min": [
+    {
+      "producer": "Joel Silver",
+      "interval": 1,
+      "previousWin": 1990,
+      "followingWin": 1991
+    }
+  ],
+  "max": [
+    {
+      "producer": "Matthew Vaughn",
+      "interval": 13,
+      "previousWin": 2002,
+      "followingWin": 2015
+    }
+  ]
+}
+```
+
+---
+
+## 🏗️ Arquitetura escolhida (por camadas e pastas)
+
+Arquitetura modular em camadas, com foco em separação de responsabilidades.
+
+### Responsabilidade de cada pasta
+
+- **`src/`**
+  - Bootstrap da aplicação e composição dos módulos principais.
+
+- **`src/common/`**
+  - Recursos transversais compartilhados (configuração, constantes, logger e utilitários globais).
+
+- **`src/infra/`**
+  - Implementações técnicas de infraestrutura (banco, entidades e repositórios).
+
+- **`src/modules/`**
+  - Regras de negócio e casos de uso por domínio funcional (ex.: producers, movies, data-loader).
+
+- **`src/shared/`**
+  - Arquivos estáticos compartilhados entre módulos (ex.: CSV de carga inicial).
+
+- **`test/`**
+  - Testes de integração/e2e e validação de contrato da API.
+
+### Como as camadas devem se comunicar
+
+Fluxo esperado:
+
+1. **Controller (`modules`)** recebe requisição HTTP.
+2. **Service (`modules`)** executa regra de negócio.
+3. **Repository (`infra`)** realiza acesso a dados.
+4. **Entity (`infra`)** representa o modelo persistido.
+
+Regras de comunicação:
+
+- `modules` **pode depender** de `infra` e `common`.
+- `infra` **não deve depender** de `modules`.
+- `common` deve ser **agnóstico de domínio** (sem regra de negócio de `movies`/`producers`).
+- `shared` deve conter apenas **recursos estáticos** (sem lógica).
+- Controllers devem ser finos: apenas entrada/saída HTTP; regra fica nos services.
+- Acesso ao banco deve acontecer via repositórios/serviços de infraestrutura, não direto no controller.
+
+---
+
+## ✅ Resumo de responsabilidades por camada
+
+- **Controller**: recebe requisições HTTP e retorna respostas.
+- **Service**: aplica regras de negócio e orquestra fluxos.
+- **Repository**: encapsula acesso a banco.
+- **Entity**: modela tabelas e relacionamentos.
+- **Common**: logging, validação e configurações compartilhadas.
+- **Infra**: recursos técnicos de persistência e integração.
+
+---
+
+Feito com carinho por Edu <3
