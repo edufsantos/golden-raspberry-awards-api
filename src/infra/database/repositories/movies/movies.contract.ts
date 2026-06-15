@@ -1,5 +1,5 @@
 import { Movie } from '../../entities/movies.entity';
-import { Producer } from '../../entities/producer.entity';
+import { Producer } from '../../entities/producers.entity';
 
 export type FindMoviesQuery = {
   title?: string;

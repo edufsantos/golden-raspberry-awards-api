@@ -5,7 +5,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Producer } from './producer.entity';
+import { Producer } from './producers.entity';
 
 @Entity({ name: 'movies' })
 export class Movie {
@@ -24,7 +24,7 @@ export class Movie {
   @Column({ type: 'boolean', default: false })
   winner: boolean;
 
-  @ManyToMany(() => Producer, (producer) => producer.movies, {
+  @ManyToMany(() => Producer, (producers) => producers.movies, {
     cascade: false,
   })
   @JoinTable({ name: 'movie_producers' })

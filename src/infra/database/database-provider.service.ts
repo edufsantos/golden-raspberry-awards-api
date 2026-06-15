@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { CustomLogger } from '../../common/loggers/custom.logger';
 import { Movie } from './entities/movies.entity';
-import { Producer } from './entities/producer.entity';
+import { Producer } from './entities/producers.entity';
 
 @Injectable()
 export class DatabaseProviderService implements OnModuleDestroy {

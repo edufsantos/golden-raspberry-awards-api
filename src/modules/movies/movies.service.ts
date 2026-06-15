@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Movie } from '../../infra/database/entities/movies.entity';
-import { Producer } from '../../infra/database/entities/producer.entity';
+import { Producer } from '../../infra/database/entities/producers.entity';
 import { MoviesRepository } from '../../infra/database/repositories/movies/movies.respository';
 
 export type CreateMovieInput = {

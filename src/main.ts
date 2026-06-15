@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CustomLogger } from '@common/loggers/custom.logger';
 import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
@@ -22,6 +21,9 @@ async function bootstrap() {
   });
   const customLogger = app.get(CustomLogger);
   app.useLogger(customLogger);
+  app.enableCors({
+    origin: 'http://localhost:5173',
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -39,4 +41,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 
-bootstrap();
+void bootstrap();

@@ -1,7 +1,7 @@
 import { CustomLogger } from '@common/loggers/custom.logger';
 import { Injectable } from '@nestjs/common';
 import { DatabaseProviderService } from '../../infra/database/database-provider.service';
-import { Producer } from '../../infra/database/entities/producer.entity';
+import { Producer } from '../../infra/database/entities/producers.entity';
 import { MoviesService } from '../movies/movies.service';
 
 export type ProducerAwardInterval = {
