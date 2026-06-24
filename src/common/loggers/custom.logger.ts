@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Env } from '@common/config/env';
 import { ConsoleLogger, Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -75,8 +74,6 @@ export class CustomLogger extends ConsoleLogger {
   }
 
   debug(message: string, context?: string) {
-    console.log('asjdhakjlsbhdlkajs');
-
     if (this.isLogLevelEnabled(LogConstants.DEBUG)) {
       if (context) {
         super.debug(message, context);
