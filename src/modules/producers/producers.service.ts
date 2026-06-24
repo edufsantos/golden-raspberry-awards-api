@@ -1,7 +1,7 @@
 import { CustomLogger } from '@common/loggers/custom.logger';
 import { Injectable } from '@nestjs/common';
-import { DatabaseProviderService } from '../../infra/database/database-provider.service';
 import { Producer } from '../../infra/database/entities/producers.entity';
+import { ProducersRepository } from '../../infra/database/repositories/producers/producers.repository';
 import { MoviesService } from '../movies/movies.service';
 
 export type ProducerAwardInterval = {
@@ -19,94 +19,69 @@ export type ProducerAwardsIntervalResponse = {
 @Injectable()
 export class ProducersService {
   constructor(
-    private readonly databaseProvider: DatabaseProviderService,
+    private readonly producersRepository: ProducersRepository,
     private readonly moviesService: MoviesService,
     private readonly logger: CustomLogger,
   ) {}
 
   async findOrCreateByNames(names: string[]): Promise<Producer[]> {
-    const repository = await this.databaseProvider.getRepository(Producer);
-
-    const uniqueNames = [
-      ...new Set(names.map((name) => name.trim()).filter(Boolean)),
-    ];
-
-    if (uniqueNames.length === 0) {
-      return [];
-    }
-
-    const existingProducers = await repository.find({
-      where: uniqueNames.map((name) => ({ name })),
-    });
-
-    const existingMap = new Map(
-      existingProducers.map((producer) => [producer.name, producer]),
-    );
-
-    const toCreate = uniqueNames
-      .filter((name) => !existingMap.has(name))
-      .map((name) => repository.create({ name }));
-
-    const created =
-      toCreate.length > 0
-        ? await repository.save(toCreate)
-        : ([] as Producer[]);
-
-    return [...existingProducers, ...created];
+    return this.producersRepository.findOrCreateByNames(names);
   }
 
   async getAwardsInterval(): Promise<ProducerAwardsIntervalResponse> {
-    // Busca a lista dos filmes vencedores
-    const winerMovies =
+    const winningMovies =
       await this.moviesService.findWinningMoviesWithProducers();
 
-    const producerWins = new Map<string, number[]>();
+    const lastWinByProducer = new Map<string, number>();
+    let minInterval = Number.POSITIVE_INFINITY;
+    let maxInterval = Number.NEGATIVE_INFINITY;
+    let min: ProducerAwardInterval[] = [];
+    let max: ProducerAwardInterval[] = [];
 
-    // Para cada filme que ganhou, intera os nomes dos produtores e armazena o ano de cada vitoria
-    for (const movie of winerMovies) {
+    for (const movie of winningMovies) {
       for (const producer of movie.producers) {
-        const wins = producerWins.get(producer.name) ?? [];
-        wins.push(movie.year);
-        producerWins.set(producer.name, wins);
+        const producerName = producer.name;
+        const year = movie.year;
+        const previousWin = lastWinByProducer.get(producerName);
+
+        if (previousWin !== undefined) {
+          const intervalItem: ProducerAwardInterval = {
+            producer: producerName,
+            interval: year - previousWin,
+            previousWin,
+            followingWin: year,
+          };
+
+          if (intervalItem.interval < minInterval) {
+            minInterval = intervalItem.interval;
+            min = [intervalItem];
+          } else if (intervalItem.interval === minInterval) {
+            min.push(intervalItem);
+          }
+
+          if (intervalItem.interval > maxInterval) {
+            maxInterval = intervalItem.interval;
+            max = [intervalItem];
+          } else if (intervalItem.interval === maxInterval) {
+            max.push(intervalItem);
+          }
+        }
+
+        lastWinByProducer.set(producerName, year);
       }
     }
 
-    this.logger.debug(
-      `Producer wins: ${JSON.stringify(Array.from(producerWins.entries()))}`,
-    );
-
-    const intervals: ProducerAwardInterval[] = [];
-
-    for (const [producer, years] of producerWins.entries()) {
-      if (years.length < 2) {
-        continue;
-      }
-
-      years.sort((a, b) => a - b);
-
-      for (let index = 1; index < years.length; index += 1) {
-        const previousWin = years[index - 1];
-        const followingWin = years[index];
-
-        intervals.push({
-          producer,
-          interval: followingWin - previousWin,
-          previousWin,
-          followingWin,
-        });
-      }
-    }
-
-    if (intervals.length === 0) {
+    if (minInterval === Number.POSITIVE_INFINITY) {
       return { min: [], max: [] };
     }
 
-    const minInterval = Math.min(...intervals.map((item) => item.interval));
-    const maxInterval = Math.max(...intervals.map((item) => item.interval));
+    this.logger.debug(
+      `Intervals calculated. min=${minInterval}, max=${maxInterval}`,
+    );
 
     return {
-      min: intervals.filter((item) => item.interval === minInterval),
-      max: intervals.filter((item) => item.interval === maxInterval),
+      min,
+      max,
     };
   }
 }
